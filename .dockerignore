@@ -1,0 +1,7 @@
+.git/
+.venv/
+__pycache__/
+openenv_sql_debug.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
