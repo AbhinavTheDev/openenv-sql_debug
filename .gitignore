@@ -1,0 +1,4 @@
+.venv/
+.env
+__pycache__
+openenv_sql_debug.egg-info
