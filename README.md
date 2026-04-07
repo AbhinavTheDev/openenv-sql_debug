@@ -19,8 +19,8 @@ tags:
 An [OpenEnv](https://openenv.dev)-compliant environment where AI agents fix broken SQL queries and optimize slow ones against in-memory SQLite databases.
 
 > ✅ **Validator:** `openenv validate` passes when the environment is wired up correctly
-> 🚀 **Local API:** `http://localhost:8000`
-> 📖 **Swagger UI:** `http://localhost:8000/docs`
+> 🚀 **Local API:** `https://abhinavthedev-sql-debug.hf.space`
+> 📖 **Swagger UI:** `https://abhinavthedev-sql-debug.hf.space/docs`
 
 ---
 
@@ -83,7 +83,7 @@ The environment is intentionally practical: each task mirrors a real debugging p
 
 ### Base URL
 ```text
-http://localhost:8000
+https://abhinavthedev-sql-debug.hf.space
 ```
 
 ### Core Endpoints
@@ -167,7 +167,7 @@ Final scores are clamped to the range `[0.0, 1.0]`.
 ```bash
 pip install -e .
 uvicorn server.app:app --host 0.0.0.0 --port 8000 --reload
-# Open http://localhost:8000/docs
+# Open https://abhinavthedev-sql-debug.hf.space/docs
 ```
 
 ### Option 2 - Run with Docker
@@ -175,13 +175,13 @@ uvicorn server.app:app --host 0.0.0.0 --port 8000 --reload
 ```bash
 docker build -t sql-debug-env -f server/Dockerfile .
 docker run -p 8000:8000 sql-debug-env
-curl http://localhost:8000/health
+curl https://abhinavthedev-sql-debug.hf.space/health
 ```
 
 ### Option 3 - Run the Inference Loop
 
 ```bash
-export SERVER_URL=http://localhost:8000
+export SERVER_URL=https://abhinavthedev-sql-debug.hf.space
 export API_KEY=sk-...
 python inference.py
 ```
