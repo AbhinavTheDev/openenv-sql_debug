@@ -37,7 +37,7 @@ try:
     from .sql_debug_environment import SQLDebugEnvironment
 except ModuleNotFoundError:
     from models import SQLDebugAction, SQLDebugObservation
-    from sql_exp.server.sql_debug_environment import SQLDebugEnvironment
+    from server.sql_debug_environment import SQLDebugEnvironment
 
 
 app = create_app(
