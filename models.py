@@ -1,31 +1,14 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-#
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree.
-
-"""
-Data models for the SQL Debug & Optimizer Environment.
-"""
-
-from typing import Any, Dict, List
+# models.py
+from typing import Any, Dict, List, Optional
 from pydantic import Field
 from openenv.core.env_server.types import Action, Observation
 
 
 class SQLDebugAction(Action):
-    """
-    What the agent submits each step — just a SQL query string.
-    The environment will run it, grade it, and return a new observation.
-    """
     query: str = Field(..., description="The SQL query the agent wants to try")
 
 
 class SQLDebugObservation(Observation):
-    """
-    What the agent sees after each step.
-    Contains everything it needs to improve its next query.
-    """
     task_id: str = Field(default="", description="Which task is active")
     schema_sql: str = Field(default="", description="CREATE TABLE statements for this task")
     current_query: str = Field(default="", description="Last query that was run")

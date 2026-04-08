@@ -1,16 +1,6 @@
-# Copyright (c) Meta Platforms, Inc. and affiliates.
-# All rights reserved.
-#
-# This source code is licensed under the BSD-style license found in the
-# LICENSE file in the root directory of this source tree.
-
 # client.py
-"""
-SQL Debug Environment client.
-This is what inference.py uses to talk to the running server.
-"""
-
-from typing import Dict
+from typing import Dict, Optional
+import httpx
 
 from openenv.core import EnvClient
 from openenv.core.client_types import StepResult
@@ -20,35 +10,33 @@ from models import SQLDebugAction, SQLDebugObservation
 
 
 class SQLDebugEnv(EnvClient[SQLDebugAction, SQLDebugObservation, State]):
-    """
-    Client for the SQL Debug & Optimizer environment.
+    def __init__(self, base_url: str = "http://localhost:8000", **kwargs):
+        super().__init__(base_url=base_url, **kwargs)
+        self._base_url = base_url.rstrip("/")
 
-    Maintains a persistent WebSocket connection to the server.
-    Each instance gets its own dedicated environment session.
+    # ── Override reset to send task_id in body ────────────────────────────────
+    async def reset(self, task_id: Optional[str] = None, **kwargs) -> StepResult:
+        payload = {}
+        if task_id:
+            payload["task_id"] = task_id
 
-    Usage (direct server):
-        with SQLDebugEnv(base_url="http://localhost:8000") as env:
-            result = env.reset()
-            print(result.observation.target_description)
-            result = env.step(SQLDebugAction(query="SELECT * FROM orders"))
-            print(result.reward)
+        async with httpx.AsyncClient(timeout=30) as http:
+            response = await http.post(
+                f"{self._base_url}/reset",
+                json=payload,
+            )
+            response.raise_for_status()
+            return self._parse_result(response.json())
 
-    Usage (Docker):
-        env = SQLDebugEnv.from_docker_image("sql-debug-env:latest")
-        try:
-            result = env.reset()
-            result = env.step(SQLDebugAction(query="SELECT * FROM orders WHERE amount > 500"))
-        finally:
-            env.close()
-    """
-
+    # ── step payload ──────────────────────────────────────────────────────────
     def _step_payload(self, action: SQLDebugAction) -> Dict:
-        """Convert SQLDebugAction to JSON payload."""
         return {"query": action.query}
 
+    # — update _parse_result only
+
     def _parse_result(self, payload: Dict) -> StepResult[SQLDebugObservation]:
-        """Parse server JSON response into a typed StepResult."""
         obs_data = payload.get("observation", {})
+        meta = obs_data.get("metadata", {})  # ← feedback lives here now
 
         observation = SQLDebugObservation(
             task_id=obs_data.get("task_id", ""),
@@ -63,6 +51,7 @@ class SQLDebugEnv(EnvClient[SQLDebugAction, SQLDebugObservation, State]):
             available_tasks=obs_data.get("available_tasks", []),
             done=payload.get("done", False),
             reward=payload.get("reward", 0.0),
+            metadata=meta,
         )
 
         return StepResult(
@@ -72,7 +61,6 @@ class SQLDebugEnv(EnvClient[SQLDebugAction, SQLDebugObservation, State]):
         )
 
     def _parse_state(self, payload: Dict) -> State:
-        """Parse server JSON response into a State object."""
         return State(
             episode_id=payload.get("episode_id"),
             step_count=payload.get("step_count", 0),

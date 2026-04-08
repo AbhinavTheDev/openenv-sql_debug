@@ -1603,6 +1603,7 @@ name = "openenv-sql-debug"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "httpx" },
     { name = "openai" },
     { name = "openenv-core", extra = ["core"] },
     { name = "uvicorn" },
@@ -1616,6 +1617,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "httpx", specifier = ">=0.28.1" },
     { name = "openai", specifier = ">=2.30.0" },
     { name = "openenv-core", extras = ["core"], specifier = ">=0.2.2" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },

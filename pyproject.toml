@@ -20,6 +20,7 @@ dependencies = [
     "openenv-core[core]>=0.2.2",
     "openai>=2.30.0",
     "uvicorn>=0.43.0",
+    "httpx>=0.28.1",
 ]
 
 [project.optional-dependencies]
