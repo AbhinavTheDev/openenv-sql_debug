@@ -195,7 +195,6 @@ The inference script defaults to `syntax_fix_001`, logs each step, and stops whe
 ```text
 sql_exp/
 ├── client.py              # OpenEnv client wrapper
-├── grader.py              # Reward computation
 ├── inference.py           # LLM-driven inference loop
 ├── models.py              # Action and observation models
 ├── openenv.yaml           # OpenEnv manifest
@@ -209,7 +208,10 @@ sql_exp/
 │   ├── task_easy.py       # Syntax-fix task
 │   ├── task_medium.py     # Join logic task
 │   └── task_hard.py       # Query optimization task
-├── test.py                # Manual websocket smoke test
+├── graders/
+│   ├── grader_easy.py       # Syntax-fix task
+│   ├── grader_medium.py     # Join logic task
+│   └── grader_hard.py       # Query optimization task
 └── README.md              # Project overview
 ```
 
